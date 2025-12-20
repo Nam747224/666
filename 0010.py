@@ -1,6 +1,7 @@
 import streamlit as st
 from sklearn.linear_model import LinearRegression
 import feedparser
+import random
 
 st.sidebar.title("Danh sách nghệ sĩ")
 select_artist=st.sidebar.radio("Chọn nghệ sĩ:", ["Sơn Tùng MTP", "BigBang", "TheFatRat", "Khác"])
@@ -42,7 +43,7 @@ videos = {
 
 st.title("Ứng dụng giải trí")
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["MV Yêu thích", "Dự án giờ ngủ", "Tin tức mới nhất", "Kiểm tra sức khỏe", "Sport", "Kiểm tra thời gian ngủ"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["MV Yêu thích", "Dự án giờ ngủ", "Tin tức mới nhất", "Kiểm tra sức khỏe", "Sport", "Kiểm tra thời gian ngủ", "Game"])
 
 with tab1:
     st.header(f"Các bài hát của{select_artist}")
@@ -177,20 +178,38 @@ with tab5:
 
 with tab6:
     st.title("Kiểm tra thời gian ngủ mỗi ngày")
-    tabF, tabG = st.tabs(["Trẻ sơ sinh/Mới tập đi", "Trẻ nhỏ/Người lớn"])
+
+    tuổi = st.number_input('Nhập độ tuổi của bạn: ',min_value=0, max_value=100, value=18, step = 1)
+    if tuổi < 3:
+        st.info("Cần ngủ 11-14 tiếng mỗi ngày")
+    elif tuổi < 6:
+        st.info("Cần ngủ 11-14 tiếng mỗi ngày")
+    elif tuổi < 14:
+        st.info("Cần tuổi 9-11 tiếng mỗi ngày")
+    elif tuổi < 18:
+        st.info("Cần ngủ 8-10 tiếng mỗi ngày")
+    elif tuổi <65:
+        st.info("Cần ngủ 7-9 tiếng mỗi ngày")
+    else:
+        st.info("Cần ngủ 7-8 tiếng mỗi ngày")
+
+with tab7:
+    tabG, tabH = st.tabs(["Game đoán số", "Game tung xúc xắc"])
     with tabG:
-        thang = st.number_input()
-        
-        tuổi = st.number_input('Nhập độ tuổi của bạn: ',min_value=0, max_value=100, value=18, step = 1)
-        if tuổi < 3:
-            st.info("Cần ngủ 11-14 tiếng mỗi ngày")
-        elif tuổi < 6:
-            st.info("Cần ngủ 11-14 tiếng mỗi ngày")
-        elif tuổi < 14:
-            st.info("Cần ngủ 9-11 tiếng mỗi ngày")
-        elif tuổi < 18:
-            st.info("Cần ngủ 8-10 tiếng mỗi ngày")
-        elif tuổi <65:
-            st.info("Cần ngủ 7-9 tiếng mỗi ngày")
-        else:
-            st.info("Cần ngủ 7-8 tiếng mỗi ngày")
+        st.header("Game đoán số bí mật từ 1-100")
+        if "secret" not in st.session_state:
+            st.session_state.secret = random.randint(1,100)
+            st.session_state.tries = 0
+        guess = st.number_input("Nhập số dự đoán 1-100", min_value=1, max_value=100, step=1)
+        if st.button("Đoán"):
+            st.session_state.tries += 1
+            if guess < st.session_state.secret:
+                st.warning("Số bí mật lớn hơn")
+            elif guess > st.session_state.secret:
+                st.warning("Số bí mật nhỏ hơn")
+            else:
+                st.success(f"Bạn đã đoán đúng {st.session_state.tries} lần !")
+        if st.button("Chơi lại"):
+            st.session_state.secret = random.randint(1,100)
+            st.session_state.tries = 0
+
